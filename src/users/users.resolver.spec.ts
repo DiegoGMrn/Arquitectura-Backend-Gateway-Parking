@@ -2,8 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UsersResolver } from './users.resolver';
 
 
-import { CreateUserRequest, GetUserResponse, LoginRequest, LoginResponse } from './users.pb';
+import { CreateUserRequest, LoginRequest, LoginResponse } from './users.pb';
 import { GetUserInput } from './dto/get-user.input';
+import { GetUserResponse } from './getUserResponse.entity';
 
 describe('UsersResolver', () => {
   let resolver: UsersResolver;
@@ -20,6 +21,7 @@ describe('UsersResolver', () => {
               createUser: jest.fn(),
               login: jest.fn(),
               getService: jest.fn(),
+              getUser: jest.fn(),
             }),
           },
         },
@@ -79,22 +81,14 @@ describe('UsersResolver', () => {
     const getUserInput: GetUserInput = { id: 5 }; 
 
     const mockGetUserResponse: GetUserResponse = {
-      user: {
         id: 5, 
         name: 'Marcelo',
         email: 'Marcelo1@gmail.com',
         password: '$2a$10$vooHCdu.uFuFY5HBkxHxnOgHIFVXoGWmH/Lz.l0MXiMAjX3BmNyAu',
-        tipoUser: true,
-        created_at: '2022-01-01T00:00:00Z',
-        updated_at: '2022-01-02T00:00:00Z',
-        deleted_at: '',
-      },
+        tipoUser: true
     };
 
-    // Simular la implementación de la función getUser del resolver
-    jest.spyOn(resolver, 'getUser').mockImplementation(async (getUserInput: GetUserInput) => {
-      return mockGetUserResponse; // Retornar directamente el objeto mockGetUserResponse
-    });
+    jest.spyOn(resolver, 'getUser').mockResolvedValue(mockGetUserResponse);
 
     const result = await resolver.getUser(getUserInput);
 
